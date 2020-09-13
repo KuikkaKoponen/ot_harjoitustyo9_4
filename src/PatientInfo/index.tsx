@@ -2,27 +2,47 @@ import React from 'react';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { apiBaseUrl } from "../constants";
-import { useStateValue } from "../state";
+import { useStateValue, updatePatient } from "../state";
 import { Patient} from "../types";
 
 
+// Tämä jää pyörimään luupille. KORJAA
 const PatientInfo: React.FC = () => {  
       const { id } = useParams<{ id: string }>();
       const [{ patients }, dispatch] = useStateValue();  // custom hook to inject the state, and the dispatcher for updating it
       
-      const updatePatient = async () => {
+      React.useEffect(() => {
+    
+        const fetchPatientList = async () => {
+          try {
+            const { data: patient } = await axios.get<Patient>(
+              `${apiBaseUrl}/patients/${id}`
+            );
+            //dispatch({ type: "SET_PATIENT_LIST", payload: patientListFromApi });
+            dispatch(updatePatient(patient));
+          } catch (e) {
+            console.error(e);
+          }
+        };
+        fetchPatientList();
+      }, [dispatch, id]);
+      
+      /*
+      const updateOldPatient = async () => {
         try {
           const { data: patient } = await axios.get<Patient>(
             `${apiBaseUrl}/patients/${id}`
           );
 
-          dispatch({ type: "UPDATE_PATIENT", payload: patient });
+          dispatch(updatePatient(patient));
+          //dispatch({ type: "UPDATE_PATIENT", payload: patient });
         } catch (e) {
           console.error(e.response.data);
         }
       };
+      */
       
-      updatePatient();
+      //updateOldPatient();
 
       const patient = Object.values(patients).find((patient: Patient) => (patient.id === id));
 
@@ -48,9 +68,9 @@ const PatientInfo: React.FC = () => {
           return (
             <ul key= {entry.id}>
               <li >{entry.description} </li>
-              <li> {entry.creationDate} </li>
+              <li> {entry.date} </li>
               <li> {entry.specialist} </li>
-              <li> {entry.diagnosis} </li>
+              <li> {entry.diagnosisCodes} </li>
             </ul>
           );
         });
