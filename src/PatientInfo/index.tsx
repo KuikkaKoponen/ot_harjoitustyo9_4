@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { apiBaseUrl } from "../constants";
 import { useStateValue, updatePatient } from "../state";
-import { Patient} from "../types";
+import { Patient, Entry} from "../types";
 
 
 // Tämä jää pyörimään luupille. KORJAA
@@ -46,37 +46,41 @@ const PatientInfo: React.FC = () => {
 
       const patient = Object.values(patients).find((patient: Patient) => (patient.id === id));
 
-      if (patient === undefined) {
+      if (!patient) {
         return (<div><p> Patient not found </p></div> );
 
-      } else if (patient.entries === undefined) {
-        return (
-          <div className="patient-info">
-            <h1>Patient information </h1>
-            <p> {patient.name} </p> 
-            <ul> 
-              <li>Gender: {patient.gender}</li>
-              <li>Occupation: {patient.occupation}</li>
-              <li>Name: {patient.name}</li>
-              <li>Date of birth: {patient.dateOfBirth}</li>
-            </ul>
-          </div>
-        );
       } else {
-        
-        const entries = patient.entries.map((entry) => { 
-          return (
-            <ul key= {entry.id}>
-              <li >{entry.description} </li>
-              <li> {entry.date} </li>
-              <li> {entry.specialist} </li>
-              <li> {entry.diagnosisCodes} </li>
-            </ul>
-          );
-        });
+ 
+        const diagnosisCodes = (entry: Entry) => {
+          if (entry.diagnosisCodes) {
+            const diagnoses = entry.diagnosisCodes.map((diagnose) => {
+              return <li key={diagnose}> {diagnose} </li>;
+            });
+            return <ul> Diagnoses: {diagnoses}</ul>;
+          }
+        };
+
+        const entries = (patient: Patient) => {
+          if (patient.entries) {
+            return patient.entries.map((entry) => { 
+              return (
+                  <div key= {entry.id}>
+                    <ul>
+                      <li >{entry.description} </li>
+                      <li> {entry.date} </li>
+                      <li> {entry.specialist} </li>  
+                    </ul>
+                    
+                      {diagnosisCodes(entry)}
+
+                  </div>
+              );
+            });
+          }
+        };
 
         return (
-          <div className="patient-info">
+         <div className="patient-info">
             <h1>Patient information </h1>
             <p> {patient.name} </p> 
             <ul> 
@@ -85,11 +89,10 @@ const PatientInfo: React.FC = () => {
               <li>Name: {patient.name}</li>
               <li>Date of birth: {patient.dateOfBirth}</li>  
             </ul>
-            <p> Entries: </p> 
-            {entries}
+            <p> Entries </p>
+            {entries(patient)}
           </div>
         );
-
       } 
 };
 
