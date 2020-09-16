@@ -1,9 +1,9 @@
 import React from 'react';
-import {HealthCheckEntry} from "../types";
+import {Entry} from "../types";
 
-const HealthCheckEntryComponent: React.FC<{entry: HealthCheckEntry}> = ({ entry }) => {
+const HealthCheckEntryComponent: React.FC<{entry: Entry}> = ({ entry }) => {
 
-  const diagnosisCodes = (entry: HealthCheckEntry) => {
+  const diagnosisCodes = (entry: Entry) => {
     if (entry.diagnosisCodes) {
       const diagnoses = entry.diagnosisCodes.map((diagnose) => {
         return <li key={diagnose}> {diagnose} </li>;

@@ -1,15 +1,16 @@
 import React from 'react';
-import {HospitalEntry} from "../types";
+import {Entry} from "../types";
 
-const HospitalEntryComponent = (entry: HospitalEntry) => {
+const HospitalEntryComponent: React.FC<{entry: Entry}> = ({ entry }) => {
 
-  const diagnosisCodes = (entry: HospitalEntry) => {
+  const diagnosisCodes = (entry: Entry) => {
     if (entry.diagnosisCodes) {
       const diagnoses = entry.diagnosisCodes.map((diagnose) => {
         return <li key={diagnose}> {diagnose} </li>;
       });
       return <ul> Diagnoses: {diagnoses}</ul>;
     }
+    return <div></div>;
   };
 
   if (entry) {

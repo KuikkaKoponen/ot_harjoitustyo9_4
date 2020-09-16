@@ -86,16 +86,17 @@ const PatientInfo: React.FC = () => {
           }
         };
         
+        // 93 jotain häikkää. Pitäisikö käyttää try catch tms.
         const entries = (patient: Patient ) => {
             if (patient.entries) {  
-              const joku = patient.entries.map((entry) => { 
-                 <EntryDetails entry={entry}/>;
+              const joku = patient.entries.map(entry => { 
+              // aina pitää olla return
+              return (<div key = {entry.id}> <EntryDetails entry={entry}/> </div>); 
               }); 
-              return joku;
+            return <div>{joku}</div>;
             }    
             return <div>No Entries</div>; 
         };
-
  
         return (
          <div className="patient-info">

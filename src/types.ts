@@ -34,7 +34,6 @@ interface BaseEntry {
   diagnosisCodes?: Array<DiagnoseEntry['code']>;
 }
 
-
 export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
