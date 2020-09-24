@@ -7,12 +7,21 @@ import { Patient, Entry } from "../types";
 import HospitalEntryComponent from "../components/HospitalEntry";
 import OccupationalHealthcareEntry from "../components/OccupationalHealthcareEntry";
 import HealthCheckEntry from "../components/HealthCheckEntry";
+import { Button } from "semantic-ui-react";
+import AddEntryModal from "../AddEntryModal";
+import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 
 const PatientInfo: React.FC = () => {  
       const { id } = useParams<{ id: string }>();
       const [{ patients }, dispatch] = useStateValue();  // custom hook to inject the state, and the dispatcher for updating it
       
+      // useState hook for managing modal visibility and form error handling <- erron handlingiä ei toteutettu
+      const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+      const openModal = (): void => setModalOpen(true);
+      const closeModal = (): void => setModalOpen(false); 
+
+      // onko järkevämpää tapaa latada tietoja. Tuntuu, että tämä kestää aika kauan
       React.useEffect(() => {
     
         const fetchPatientList = async () => {
@@ -20,7 +29,6 @@ const PatientInfo: React.FC = () => {
             const { data: patient } = await axios.get<Patient>(
               `${apiBaseUrl}/patients/${id}`
             );
-            //dispatch({ type: "SET_PATIENT_LIST", payload: patientListFromApi });
             dispatch(updatePatient(patient));
           } catch (e) {
             console.error(e);
@@ -28,23 +36,33 @@ const PatientInfo: React.FC = () => {
         };
         fetchPatientList();
       }, [dispatch, id]);
-      
-      /*
-      const updateOldPatient = async () => {
-        try {
-          const { data: patient } = await axios.get<Patient>(
-            `${apiBaseUrl}/patients/${id}`
-          );
 
-          dispatch(updatePatient(patient));
-          //dispatch({ type: "UPDATE_PATIENT", payload: patient });
+
+      // Tässä olisi paranneltavaa
+      const submitNewEntry= async (values: EntryFormValues) => {
+        try {
+          console.log('Submit');
+          console.log(values);
+          
+        // Kaiva osoitekentästä patient id. Siitä muodostetaan url osoite mihin post lähetetään
+
+        const { data: newEntry } = await axios.post<Entry>(
+          `${apiBaseUrl}/patients/${id}/entries`,
+          values
+        );
+        closeModal();
+
+        console.log(`Saatiin vastaus: ${newEntry}`);
+        
+        // Tee tallennus taulukkoon. Nyt kierretty reloadaamalla page..
+        // Vaihtoehtoisesti Pitäiskö backin heittää koko patient niin vois käyttää samaa addPatient/update patient reducerii
+        // dispatch(addEntry(newEntry));
+        window.location.reload();
+          
         } catch (e) {
           console.error(e.response.data);
         }
       };
-      */
-      
-      //updateOldPatient();
 
       const patient = Object.values(patients).find((patient: Patient) => (patient.id === id));
 
@@ -52,16 +70,6 @@ const PatientInfo: React.FC = () => {
         return (<div><p> Patient not found </p></div> );
 
       } else {
-        /*
-        const diagnosisCodes = (entry: Entry) => {
-          if (entry.diagnosisCodes) {
-            const diagnoses = entry.diagnosisCodes.map((diagnose) => {
-              return <li key={diagnose}> {diagnose} </li>;
-            });
-            return <ul> Diagnoses: {diagnoses}</ul>;
-          }
-        };
-        */
 
         /**
          * Helper function for exhaustive type checking
@@ -106,7 +114,16 @@ const PatientInfo: React.FC = () => {
               <li>Date of birth: {patient.dateOfBirth}</li>  
             </ul>
             {entries(patient)}
-            
+  
+
+            <AddEntryModal
+              modalOpen={modalOpen}
+              onSubmit={submitNewEntry}
+              onClose={closeModal}
+            />
+            <Button onClick={() => openModal()}>Add New Entry</Button>
+
+
           </div>
         );
       } 
