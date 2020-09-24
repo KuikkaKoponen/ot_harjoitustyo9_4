@@ -9,7 +9,6 @@ import OccupationalHealthcareEntry from "../components/OccupationalHealthcareEnt
 import HealthCheckEntry from "../components/HealthCheckEntry";
 
 
-// Tämä jää pyörimään luupille. KORJAA
 const PatientInfo: React.FC = () => {  
       const { id } = useParams<{ id: string }>();
       const [{ patients }, dispatch] = useStateValue();  // custom hook to inject the state, and the dispatcher for updating it
@@ -86,14 +85,12 @@ const PatientInfo: React.FC = () => {
           }
         };
         
-        // 93 jotain häikkää. Pitäisikö käyttää try catch tms.
         const entries = (patient: Patient ) => {
-            if (patient.entries) {  
-              const joku = patient.entries.map(entry => { 
+            if (patient.entries && patient.entries.length > 0) {
+              return patient.entries.map(entry => { 
               // aina pitää olla return
               return (<div key = {entry.id}> <EntryDetails entry={entry}/> </div>); 
               }); 
-            return <div>{joku}</div>;
             }    
             return <div>No Entries</div>; 
         };
@@ -108,8 +105,7 @@ const PatientInfo: React.FC = () => {
               <li>Name: {patient.name}</li>
               <li>Date of birth: {patient.dateOfBirth}</li>  
             </ul>
-            <p> Entries: </p>
-            {(patient.entries) ? entries(patient) : <p>No entries</p>}
+            {entries(patient)}
             
           </div>
         );

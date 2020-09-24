@@ -1,34 +1,29 @@
 import React from 'react';
-import {Entry} from "../types";
+import {HealthCheckEntry} from "../types";
 
-const HealthCheckEntryComponent: React.FC<{entry: Entry}> = ({ entry }) => {
+const HealthCheckEntryComponent: React.FC<{entry: HealthCheckEntry}> = ({ entry }) => {
 
-  const diagnosisCodes = (entry: Entry) => {
+  const diagnosisCodes = (entry: HealthCheckEntry) => {
     if (entry.diagnosisCodes) {
       const diagnoses = entry.diagnosisCodes.map((diagnose) => {
         return <li key={diagnose}> {diagnose} </li>;
       });
       return <ul> Diagnoses: {diagnoses}</ul>;
     }
-    return <div>Empty2</div>;
   };
 
-  if (entry) {
-      return (
-          <div key= {entry.id}>
-            <ul>
-              <li >{entry.description} </li>
-              <li> {entry.date} </li>
-              <li> {entry.specialist} </li>  
-            </ul>
-              {diagnosisCodes(entry)}
-          </div>
-      );
-
-  } else {
-    return <div>Empty</div>;
-  }
-  
+  return (
+      <div key= {entry.id}>
+        <p>{entry.type} entry:</p>
+        <ul>
+          <li> Description: {entry.description} </li>
+          <li> Date: {entry.date} </li>
+          <li> Specialis:  {entry.specialist} </li>
+          <li> Healthcheck rating:  {entry.healthCheckRating} </li>  
+        </ul>
+          {diagnosisCodes(entry)}
+      </div>
+  );
 };
 
 export default HealthCheckEntryComponent;

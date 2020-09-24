@@ -11,7 +11,9 @@ import { Gender, Patient } from "../types";
  */
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
+// the props for our form component
 interface Props {
+  // both are callback functions that return void
   onSubmit: (values: PatientFormValues) => void;
   onCancel: () => void;
 }
@@ -22,8 +24,10 @@ const genderOptions: GenderOption[] = [
   { value: Gender.Other, label: "Other" }
 ];
 
+// Props as our component's props, and we destructure onSubmit and onCancel from those props.
 export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
   return (
+    // The Formik wrapper keeps a track of your form's state, and then exposes it and a few resuable methods and event handlers to your form via props
     <Formik
       initialValues={{
         name: "",
@@ -33,6 +37,7 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         gender: Gender.Other
       }}
       onSubmit={onSubmit}
+      // validate prop, that expects a validation function and returns an object containing possible errors.
       validate={values => {
         const requiredError = "Field is required";
         const errors: { [field: string]: string } = {};
@@ -94,7 +99,7 @@ export const AddPatientForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
                   type="submit"
                   floated="right"
                   color="green"
-                  disabled={!dirty || !isValid}
+                  disabled={!dirty || !isValid} // The submit button is enabled only if the form is valid and dirty, which means that user has edited some of the fields
                 >
                   Add
                 </Button>

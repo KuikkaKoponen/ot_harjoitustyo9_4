@@ -1,33 +1,30 @@
 import React from 'react';
-import {Entry} from "../types";
+import {OccupationalHealthcareEntry} from "../types";
 
-const OccupationalHealthcareEntryComponent: React.FC<{entry: Entry}> = ({ entry }) => {
+const OccupationalHealthcareEntryComponent: React.FC<{entry: OccupationalHealthcareEntry}> = ({ entry }) => {
 
-  const diagnosisCodes = (entry: Entry) => {
+  const diagnosisCodes = (entry: OccupationalHealthcareEntry) => {
     if (entry.diagnosisCodes) {
       const diagnoses = entry.diagnosisCodes.map((diagnose) => {
         return <li key={diagnose}> {diagnose} </li>;
       });
       return <ul> Diagnoses: {diagnoses}</ul>;
     }
-    return <div></div>;
   };
 
-  if (entry) {
-      return (
-          <div key= {entry.id}>
-            <ul>
-              <li >{entry.description} </li>
-              <li> {entry.date} </li>
-              <li> {entry.specialist} </li>  
-            </ul>
-              {diagnosisCodes(entry)}
-          </div>
-      );
-
-  } else {
-    return <div>Empty</div>;
-  }
+  return (
+      <div key= {entry.id}>
+        <p>{entry.type} entry:</p>
+        <ul>
+          <li> Description: {entry.description} </li>
+          <li> Date: {entry.date} </li>
+          <li> Specialis:  {entry.specialist} </li>
+          <li> Employer:  {entry.employerName} </li>
+          {(entry.sickLeave)? <li> Sickleave: Start - {entry.sickLeave.startDate}. End - {entry.sickLeave.endDate} </li>: null}
+        </ul>
+          {diagnosisCodes(entry)}
+      </div>
+  );
   
 };
 
